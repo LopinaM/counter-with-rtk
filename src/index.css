@@ -44,7 +44,7 @@ button {
   font-family: inherit;
   background-color: rgb(188, 160, 213) !important;
 
-  width: 200px;
+  width: 140px;
 
   cursor: pointer;
   transition: border-color 0.25s;

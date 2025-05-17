@@ -3,41 +3,54 @@ import s from "../CounterWrapper.module.css";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   setCount,
-  setMaxInputValue,
   setMaxValue,
-  setMinInputValue,
   setMinValue,
+  setShowSettings,
 } from "../../store/counterSlice";
 
 export const Settings = () => {
-  const { minValue, maxValue, minInputValue, maxInputValue } = useAppSelector(
-    (state) => state.counter
-  );
+  const { minValue, maxValue } = useAppSelector((state) => state.counter);
   const dispatch = useAppDispatch();
 
   const maxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setMaxInputValue(Number(e.currentTarget.value)));
+    dispatch(setMaxValue(Number(e.currentTarget.value)));
   };
 
   const startValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setMinInputValue(Number(e.currentTarget.value)));
+    dispatch(setMinValue(Number(e.currentTarget.value)));
   };
 
   const setParams = () => {
-    dispatch(setMinValue(minInputValue));
-    dispatch(setMaxValue(maxInputValue));
-    dispatch(setCount(minInputValue));
+    dispatch(setCount(minValue));
+    dispatch(setShowSettings(false));
   };
 
-  const disabled =
-    minInputValue < 0 ||
-    minInputValue === maxInputValue ||
-    maxInputValue < minInputValue ||
-    (minValue === minInputValue && maxValue === maxInputValue);
+  const disabled = minValue < 0 || minValue === maxValue || maxValue < minValue;
 
-  const minInputError = maxInputValue === minInputValue || minInputValue < 0;
-  const maxValueError =
-    maxInputValue === minInputValue || maxInputValue < minInputValue;
+  const minInputError = maxValue === minValue || minValue < 0;
+  const maxValueError = maxValue === minValue || maxValue < minValue;
+
+  const message =
+    minValue === maxValue
+      ? "Max and min values can't be equal!"
+      : maxValue < minValue
+      ? "Max value can't be less than min value!"
+      : minValue < 0
+      ? "Min value can't be negative!"
+      : "";
+
+  const value = (
+    <div
+      style={{
+        color:
+          typeof message === "string" || message === maxValue
+            ? "red"
+            : "inherit",
+      }}
+    >
+      {message}
+    </div>
+  );
 
   return (
     <div className={s.container}>
@@ -47,7 +60,7 @@ export const Settings = () => {
           <input
             className={`${s.input} ${maxValueError ? s.error : ""}`}
             type="number"
-            value={maxInputValue}
+            value={maxValue}
             onChange={maxValueChange}
           />
         </div>
@@ -56,10 +69,11 @@ export const Settings = () => {
           <input
             className={`${s.input} ${minInputError ? s.error : ""}`}
             type="number"
-            value={minInputValue}
+            value={minValue}
             onChange={startValueChange}
           />
         </div>
+        <div style={{ fontSize: "20px", height: "20px" }}>{value}</div>
       </div>
 
       <div className={s.wrap}>

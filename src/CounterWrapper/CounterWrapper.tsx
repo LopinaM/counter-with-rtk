@@ -1,20 +1,9 @@
-import React from "react";
 import { Counter } from "./Counter/Counter";
 import { Settings } from "./Settings/Settings";
-import { loadFromStorage } from "../store/counterSlice";
-import { useAppDispatch } from "../store/hooks";
+import { useAppSelector } from "../store/hooks";
 
 export const CounterWrapper = () => {
-  const dispatch = useAppDispatch();
+  const { showSettings } = useAppSelector((state) => state.counter);
 
-  React.useEffect(() => {
-    dispatch(loadFromStorage());
-  }, [dispatch]);
-
-  return (
-    <>
-      <Settings />
-      <Counter />
-    </>
-  );
+  return <>{showSettings ? <Settings /> : <Counter />}</>;
 };
